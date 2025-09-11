@@ -47,4 +47,20 @@ contract StringsTest is Test {
         (bool success, ) = input.tryParseAddress(begin, begin + 40);
         assertFalse(success);
     }
+
+    function testToLowerAscii() external pure {
+        assertEq(Strings.toLower(""), "");
+        assertEq(Strings.toLower("abc"), "abc");
+        assertEq(Strings.toLower("ABC"), "abc");
+        assertEq(Strings.toLower("AbC%123!"), "abc%123!");
+        assertEq(Strings.toLower(unicode"👋"), unicode"👋");
+    }
+
+    function testToUpperAscii() external pure {
+        assertEq(Strings.toUpper(""), "");
+        assertEq(Strings.toUpper("abc"), "ABC");
+        assertEq(Strings.toUpper("ABC"), "ABC");
+        assertEq(Strings.toUpper("AbC%123!"), "ABC%123!");
+        assertEq(Strings.toUpper(unicode"👋"), unicode"👋");
+    }
 }

@@ -344,6 +344,26 @@ function replace(Uint256Heap storage self, uint256 newValue) internal returns (u
 [[misc]]
 == Misc
 
+=== Strings
+
+The xref:api:utils.adoc#Strings[`Strings`] library provides helpers for formatting and parsing values as strings, along with utilities for basic ASCII case conversion.
+
+[source,solidity]
+----
+using Strings for *;
+
+function normalize(string memory s) internal pure returns (string memory) {
+    // ASCII-only transformations
+    return Strings.toLower(s);
+}
+
+function shout(string memory s) internal pure returns (string memory) {
+    return Strings.toUpper(s);
+}
+----
+
+NOTE: `toLower` and `toUpper` operate on ASCII only: bytes in `A`-`Z` and `a`-`z` are converted; other bytes are left unchanged. These are not Unicode-aware.
+
 === Packing
 
 The storage in the EVM is shaped in chunks of 32 bytes, each of this chunks is known as a _slot_, and can hold multiple values together as long as these values don't exceed its size. These properties of the storage allow for a technique known as _packing_, that consists of placing values together on a single storage slot to reduce the costs associated to reading and writing to multiple slots instead of just one.

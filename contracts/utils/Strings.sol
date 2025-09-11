@@ -154,6 +154,40 @@ library Strings {
     }
 
     /**
+     * @dev Returns a copy of `input` with ASCII letters converted to lowercase.
+     *
+     * Only characters in the range `A`-`Z` (0x41-0x5A) are converted. Other bytes are left unchanged.
+     */
+    function toLower(string memory input) internal pure returns (string memory) {
+        bytes memory buffer = bytes(input);
+        for (uint256 i = 0; i < buffer.length; ++i) {
+            bytes1 char = buffer[i];
+            if (char >= 0x41 && char <= 0x5a) {
+                // ASCII uppercase to lowercase is +32
+                buffer[i] = bytes1(uint8(char) + 32);
+            }
+        }
+        return string(buffer);
+    }
+
+    /**
+     * @dev Returns a copy of `input` with ASCII letters converted to uppercase.
+     *
+     * Only characters in the range `a`-`z` (0x61-0x7A) are converted. Other bytes are left unchanged.
+     */
+    function toUpper(string memory input) internal pure returns (string memory) {
+        bytes memory buffer = bytes(input);
+        for (uint256 i = 0; i < buffer.length; ++i) {
+            bytes1 char = buffer[i];
+            if (char >= 0x61 && char <= 0x7a) {
+                // ASCII lowercase to uppercase is -32
+                buffer[i] = bytes1(uint8(char) - 32);
+            }
+        }
+        return string(buffer);
+    }
+
+    /**
      * @dev Parse a decimal string and returns the value as a `uint256`.
      *
      * Requirements:
