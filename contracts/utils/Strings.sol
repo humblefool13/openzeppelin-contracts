@@ -159,12 +159,26 @@ library Strings {
      * Only characters in the range `A`-`Z` (0x41-0x5A) are converted. Other bytes are left unchanged.
      */
     function toLower(string memory input) internal pure returns (string memory) {
-        bytes memory buffer = bytes(input);
-        for (uint256 i = 0; i < buffer.length; ++i) {
-            bytes1 char = buffer[i];
-            if (char >= 0x41 && char <= 0x5a) {
-                // ASCII uppercase to lowercase is +32
-                buffer[i] = bytes1(uint8(char) + 32);
+        bytes memory inputBytes = bytes(input);
+        uint256 length = inputBytes.length;
+        bytes memory buffer = new bytes(length);
+        assembly ("memory-safe") {
+            let inputPtr := add(inputBytes, 0x20)
+            let bufferPtr := add(buffer, 0x20)
+            let end := add(inputPtr, length)
+            // Copy input to buffer
+            for {} lt(inputPtr, end) {
+                inputPtr := add(inputPtr, 1)
+                bufferPtr := add(bufferPtr, 1)
+            } {
+                let char := byte(0, mload(inputPtr))
+                // Check if char is in range [0x41, 0x5A] (A-Z)
+                // char >= 0x41 && char <= 0x5A
+                if and(gt(char, 0x40), lt(char, 0x5b)) {
+                    // Convert to lowercase by adding 0x20
+                    char := add(char, 0x20)
+                }
+                mstore8(bufferPtr, char)
             }
         }
         return string(buffer);
@@ -176,12 +190,26 @@ library Strings {
      * Only characters in the range `a`-`z` (0x61-0x7A) are converted. Other bytes are left unchanged.
      */
     function toUpper(string memory input) internal pure returns (string memory) {
-        bytes memory buffer = bytes(input);
-        for (uint256 i = 0; i < buffer.length; ++i) {
-            bytes1 char = buffer[i];
-            if (char >= 0x61 && char <= 0x7a) {
-                // ASCII lowercase to uppercase is -32
-                buffer[i] = bytes1(uint8(char) - 32);
+        bytes memory inputBytes = bytes(input);
+        uint256 length = inputBytes.length;
+        bytes memory buffer = new bytes(length);
+        assembly ("memory-safe") {
+            let inputPtr := add(inputBytes, 0x20)
+            let bufferPtr := add(buffer, 0x20)
+            let end := add(inputPtr, length)
+            // Copy input to buffer
+            for {} lt(inputPtr, end) {
+                inputPtr := add(inputPtr, 1)
+                bufferPtr := add(bufferPtr, 1)
+            } {
+                let char := byte(0, mload(inputPtr))
+                // Check if char is in range [0x61, 0x7A] (a-z)
+                // char >= 0x61 && char <= 0x7A
+                if and(gt(char, 0x60), lt(char, 0x7b)) {
+                    // Convert to uppercase by subtracting 0x20
+                    char := sub(char, 0x20)
+                }
+                mstore8(bufferPtr, char)
             }
         }
         return string(buffer);
